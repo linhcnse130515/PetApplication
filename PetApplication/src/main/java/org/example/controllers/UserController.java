@@ -5,6 +5,7 @@ import org.example.model.persistence.User;
 import org.example.model.persistence.repositories.CartRepository;
 import org.example.model.persistence.repositories.UserRepository;
 import org.example.model.requests.CreateUserRequest;
+import org.example.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,9 @@ public class UserController {
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
 
+	@Autowired
+	private UserService userService;
+
 	@GetMapping("/id/{id}")
 	public ResponseEntity<User> findById(@PathVariable Long id) {
 		return ResponseEntity.of(userRepository.findById(id));
@@ -40,20 +44,8 @@ public class UserController {
 	
 	@PostMapping("/create")
 	public ResponseEntity<User> createUser(@RequestBody CreateUserRequest createUserRequest) {
-		User user = new User();
-		user.setUsername(createUserRequest.getUsername());
-		Cart cart = new Cart();
-		cartRepository.save(cart);
-		user.setCart(cart);
-		if(createUserRequest.getPassword().length() < 7 ||
-				!createUserRequest.getPassword().equals(createUserRequest.getConfirmPassword())){
-			log.error("Password need to longer than 7 characters and equals to confirmPassword");
-			return ResponseEntity.badRequest().build();
-		}
-		user.setPassword(bCryptPasswordEncoder.encode(createUserRequest.getPassword()));
-		userRepository.save(user);
 		log.info("User name(" +  createUserRequest.getUsername() + ") was successfully created");
-		return ResponseEntity.ok(user);
+		return ResponseEntity.ok(userService.save(createUserRequest));
 	}
 	
 }
