@@ -1,4 +1,4 @@
-package org.example.model.persistence;
+package org.example.entity.persistence;
 
 import java.math.BigDecimal;
 import javax.annotation.Generated;

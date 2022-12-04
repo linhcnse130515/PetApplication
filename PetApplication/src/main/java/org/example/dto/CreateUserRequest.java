@@ -1,4 +1,4 @@
-package org.example.model.requests;
+package org.example.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

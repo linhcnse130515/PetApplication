@@ -1,10 +1,8 @@
 package org.example.controllers;
 
-import org.example.model.persistence.Cart;
-import org.example.model.persistence.User;
-import org.example.model.persistence.repositories.CartRepository;
-import org.example.model.persistence.repositories.UserRepository;
-import org.example.model.requests.CreateUserRequest;
+import org.example.entity.User;
+import org.example.repositories.UserRepository;
+import org.example.dto.CreateUserRequest;
 import org.example.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,9 +19,6 @@ public class UserController {
 
 	@Autowired
 	private UserRepository userRepository;
-	
-	@Autowired
-	private CartRepository cartRepository;
 
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;

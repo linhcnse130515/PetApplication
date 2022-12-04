@@ -1,7 +1,7 @@
 package org.example.service;
 
-import org.example.model.persistence.User;
-import org.example.model.requests.CreateUserRequest;
+import org.example.entity.User;
+import org.example.dto.CreateUserRequest;
 
 public interface UserService {
     User save(CreateUserRequest createUserRequest);

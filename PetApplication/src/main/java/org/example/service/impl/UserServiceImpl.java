@@ -1,17 +1,19 @@
 package org.example.service.impl;
 
 import org.example.controllers.UserController;
-import org.example.model.persistence.Cart;
-import org.example.model.persistence.User;
-import org.example.model.persistence.repositories.CartRepository;
-import org.example.model.persistence.repositories.UserRepository;
-import org.example.model.requests.CreateUserRequest;
+import org.example.dto.CreateUserRequest;
+import org.example.entity.User;
+import org.example.repositories.UserRepository;
+import org.example.security.CustomUserDetails;
+import org.example.security.JwtTokenProvider;
 import org.example.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import javax.transaction.Transactional;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -22,24 +24,24 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
 
     @Autowired
-    private CartRepository cartRepository;
-
-    @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    @Override
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
+
+    @Transactional
     public User save(CreateUserRequest createUserRequest) {
         User user = new User();
         user.setUsername(createUserRequest.getUsername());
-        Cart cart = new Cart();
-        cartRepository.save(cart);
-        user.setCart(cart);
-        if(createUserRequest.getPassword().length() < 7 ||
-                !createUserRequest.getPassword().equals(createUserRequest.getConfirmPassword())){
+        if (createUserRequest.getPassword().length() < 7 ||
+                !createUserRequest.getPassword().equals(createUserRequest.getConfirmPassword())) {
             log.error("Password need to longer than 7 characters and equals to confirmPassword");
             return null;
         }
-        user.setPassword(bCryptPasswordEncoder.encode(createUserRequest.getPassword()));
+        user.setPassword(createUserRequest.getPassword());
+        CustomUserDetails userDetails = new CustomUserDetails(user.getId(), user.getUsername(), user.getPassword());
+        String token = jwtTokenProvider.generateToken(userDetails);
+        user.setToken(token);
         userRepository.save(user);
         return user;
     }
