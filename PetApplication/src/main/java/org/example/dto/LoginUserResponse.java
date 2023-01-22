@@ -8,15 +8,11 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class CreateUserRequest {
+public class LoginUserResponse {
 
 	@JsonProperty
 	private String username;
 
 	@JsonProperty
-	private String password;
-
-	@JsonProperty
-	private String confirmPassword;
-
+	private String token;
 }
